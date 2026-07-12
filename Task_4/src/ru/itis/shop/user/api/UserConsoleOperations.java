@@ -1,7 +1,9 @@
 package ru.itis.shop.user.api;
 
 import ru.itis.shop.user.application.UserService;
+import ru.itis.shop.user.domain.User;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class UserConsoleOperations {
@@ -32,6 +34,10 @@ public class UserConsoleOperations {
                 updateProfile();
             }
             break;
+            case "5": {
+                showAllUsers();
+            }
+            break;
             case "0": {
                 System.exit(0);
             }
@@ -43,6 +49,7 @@ public class UserConsoleOperations {
         System.out.println("2. Вход в систему");
         System.out.println("3. Найти пользователя по id");
         System.out.println("4. Обновить данные пользователя");
+        System.out.println("5. Показать всех пользователей");
         System.out.println("0. Выход");
     }
 
@@ -90,6 +97,19 @@ public class UserConsoleOperations {
             userService.update(user);
         } else {
             System.out.println("Такого типочка нема");
+        }
+    }
+    private void showAllUsers() {
+        List<User> users = userService.findAll();
+
+        if (users.isEmpty()) {
+            System.out.println("База пуста, никто не зарегался...");
+        } else {
+            System.out.println("Список всех работяг:");
+
+            for (User user : users) {
+                System.out.println("Email: " + user.getEmail() + " | Описание: " + user.getProfileDescription());
+            }
         }
     }
 

@@ -2,18 +2,29 @@ package ru.itis.shop.app;
 
 import ru.itis.shop.user.api.UserConsoleOperations;
 import ru.itis.shop.user.application.UserService;
-import ru.itis.shop.user.infrastructure.persistence.UserFileRepository;
-import ru.itis.shop.user.infrastructure.persistence.UserMapper;
+import ru.itis.shop.user.infrastructure.persistence.UserRepositoryJdbcImpl;
+import ru.itis.shop.user.repository.UserRepository;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class Main {
+
     public static void main(String[] args) {
-        UserFileRepository userFileRepository = new UserFileRepository("users.txt", new UserMapper());
-        UserService userService = new UserService(userFileRepository);
+        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/java_2026",
+                "postgres", "2684play")) {
 
-        UserConsoleOperations operations = new UserConsoleOperations(userService);
+            UserRepository userRepositoryJdbc = new UserRepositoryJdbcImpl(connection);
+            UserService userService = new UserService(userRepositoryJdbc);
 
-        while (true) {
-            operations.showMenu();
+            UserConsoleOperations operations = new UserConsoleOperations(userService);
+
+            while (true) {
+                operations.showMenu();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
